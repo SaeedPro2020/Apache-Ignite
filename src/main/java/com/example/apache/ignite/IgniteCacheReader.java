@@ -24,7 +24,7 @@ public class IgniteCacheReader {
 
             // Print the retrieved data
             System.out.println("Data from cache: " + data);
-            return data.toString();
+            return data != null ? data : "No data found for key: " + key;
         } catch (IgniteException e) {
             e.printStackTrace();
             return e.toString();

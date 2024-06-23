@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.apache.ignite.IgniteCacheReader;
-import com.example.apache.utility.OneHourTimer;
 import com.example.utility.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -25,9 +24,6 @@ public class MyController {
 
     @Autowired
     private IgniteCacheReader cacheReader;
-
-    @Autowired
-    private OneHourTimer oneHourTimer;
 
     private String getCurrentHourKey() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH"));
@@ -44,7 +40,7 @@ public class MyController {
                 @Override
                 public void run() {
                     try {
-                        IgniteCache<String, String> cache = ignite.getOrCreateCache("jsonCache");
+                        IgniteCache<String, String> cache = ignite.cache("jsonCache");
 
                         // Generate data using the utility method
                         Container container = DataGeneratorUtils.generateData();
@@ -56,10 +52,10 @@ public class MyController {
                         // Get the current hour key
                         String currentHourKey = getCurrentHourKey();
 
-                        // Conditionally update the cache
-                        if (oneHourTimer.isFlag()) {
+                        // Conditionally update the cache based on expiry policy
+                        String cachedData = cache.get(currentHourKey);
+                        if (cachedData == null) {
                             cache.put(currentHourKey, jsonString);
-                            oneHourTimer.resetFlag(); // Reset the flag and start the timer
                         } else {
                             System.out.println("Data in cache won't change");
                         }
