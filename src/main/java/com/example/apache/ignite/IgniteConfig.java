@@ -20,7 +20,7 @@ public class IgniteConfig {
 
         // Configure cache with expiry policy
         CacheConfiguration<String, String> cacheCfg = new CacheConfiguration<>("jsonCache");
-        cacheCfg.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(Duration.ONE_MINUTE));
+        cacheCfg.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(Duration.ONE_HOUR));
 
         cfg.setCacheConfiguration(cacheCfg);
 
